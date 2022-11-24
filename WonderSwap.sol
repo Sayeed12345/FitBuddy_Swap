@@ -353,8 +353,7 @@ interface IwonderswapV2Router02 is IwonderswapV2Router01 {
 
 contract wonderswapV2Router02 is IwonderswapV2Router02 {
 
-    using SafeMathwonderswap
-    for uint;
+    using SafeMathwonderswap for uint;
 
     address public immutable override factory;
     address public immutable override WETH;
