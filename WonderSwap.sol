@@ -8,15 +8,15 @@ pragma solidity ^0.6.12;
 library SafeMathwonderswap {
 
     function add(uint x, uint y) internal pure returns(uint z) {
-        require((z = x + y) >= x, 'ds-math-add-overflow');
+        require((z = x + y) >= x, "ds-math-add-overflow");
     }
 
     function sub(uint x, uint y) internal pure returns(uint z) {
-        require((z = x - y) <= x, 'ds-math-sub-underflow');
+        require((z = x - y) <= x, "ds-math-sub-underflow");
     }
 
     function mul(uint x, uint y) internal pure returns(uint z) {
-        require(y == 0 || (z = x * y) / y == x, 'ds-math-mul-overflow');
+        require(y == 0 || (z = x * y) / y == x, "ds-math-mul-overflow");
     }
 
     function div(uint256 a, uint256 b) internal pure returns(uint256) {
@@ -38,28 +38,28 @@ library SafeMathwonderswap {
 library TransferHelper {
 
     function safeApprove(address token, address to, uint value) internal {
-        // bytes4(keccak256(bytes('approve(address,uint256)')));
+        // bytes4(keccak256(bytes("approve(address,uint256)")));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x095ea7b3, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: APPROVE_FAILED');
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "TransferHelper: APPROVE_FAILED");
     }
 
     function safeTransfer(address token, address to, uint value) internal {
-        // bytes4(keccak256(bytes('transfer(address,uint256)')));
+        // bytes4(keccak256(bytes("transfer(address,uint256)")));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0xa9059cbb, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: TRANSFER_FAILED');
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "TransferHelper: TRANSFER_FAILED");
     }
 
     function safeTransferFrom(address token, address from, address to, uint value) internal {
-        // bytes4(keccak256(bytes('transferFrom(address,address,uint256)')));
+        // bytes4(keccak256(bytes("transferFrom(address,address,uint256)")));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x23b872dd, from, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: TRANSFER_FROM_FAILED');
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "TransferHelper: TRANSFER_FROM_FAILED");
     }
 
     function safeTransferETH(address to, uint value) internal {
         (bool success, ) = to.call {
             value: value
         }(new bytes(0));
-        require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
+        require(success, "TransferHelper: ETH_TRANSFER_FAILED");
     }
 
 }
@@ -73,9 +73,9 @@ library wonderswapV2Library {
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(address tokenA, address tokenB) internal pure returns(address token0, address token1) {
-        require(tokenA != tokenB, 'wonderswapV2Library: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, "wonderswapV2Library: IDENTICAL_ADDRESSES");
         (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'wonderswapV2Library: ZERO_ADDRESS');
+        require(token0 != address(0), "wonderswapV2Library: ZERO_ADDRESS");
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
@@ -98,15 +98,15 @@ library wonderswapV2Library {
 
     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
     function quote(uint amountA, uint reserveA, uint reserveB) internal pure returns(uint amountB) {
-        require(amountA > 0, 'wonderswapV2Library: INSUFFICIENT_AMOUNT');
-        require(reserveA > 0 && reserveB > 0, 'wonderswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountA > 0, "wonderswapV2Library: INSUFFICIENT_AMOUNT");
+        require(reserveA > 0 && reserveB > 0, "wonderswapV2Library: INSUFFICIENT_LIQUIDITY");
         amountB = amountA.mul(reserveB) / reserveA;
     }
 
     // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) internal pure returns(uint amountOut) {
-        require(amountIn > 0, 'wonderswapV2Library: INSUFFICIENT_INPUT_AMOUNT');
-        require(reserveIn > 0 && reserveOut > 0, 'wonderswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountIn > 0, "wonderswapV2Library: INSUFFICIENT_INPUT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "wonderswapV2Library: INSUFFICIENT_LIQUIDITY");
         uint amountInWithFee = amountIn.mul(9975);
         uint numerator = amountInWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(10000).add(amountInWithFee);
@@ -115,8 +115,8 @@ library wonderswapV2Library {
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) internal pure returns(uint amountIn) {
-        require(amountOut > 0, 'wonderswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT');
-        require(reserveIn > 0 && reserveOut > 0, 'wonderswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountOut > 0, "wonderswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "wonderswapV2Library: INSUFFICIENT_LIQUIDITY");
         uint numerator = reserveIn.mul(amountOut).mul(10000);
         uint denominator = reserveOut.sub(amountOut).mul(9975);
         amountIn = (numerator / denominator).add(1);
@@ -124,7 +124,7 @@ library wonderswapV2Library {
 
     // performs chained getAmountOut calculations on any number of pairs
     function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns(uint[] memory amounts) {
-        require(path.length >= 2, 'wonderswapV2Library: INVALID_PATH');
+        require(path.length >= 2, "wonderswapV2Library: INVALID_PATH");
         amounts = new uint[](path.length);
         amounts[0] = amountIn;
         for (uint i; i < path.length - 1; i++) {
@@ -135,7 +135,7 @@ library wonderswapV2Library {
 
     // performs chained getAmountIn calculations on any number of pairs
     function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns(uint[] memory amounts) {
-        require(path.length >= 2, 'wonderswapV2Library: INVALID_PATH');
+        require(path.length >= 2, "wonderswapV2Library: INVALID_PATH");
         amounts = new uint[](path.length);
         amounts[amounts.length - 1] = amountOut;
         for (uint i = path.length - 1; i > 0; i--) {
@@ -359,7 +359,7 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
     address public immutable override WETH;
 
     modifier ensure(uint deadline) {
-        require(deadline >= block.timestamp, 'wonderswapV2Router: EXPIRED');
+        require(deadline >= block.timestamp, "wonderswapV2Router: EXPIRED");
         _;
     }
 
@@ -384,12 +384,12 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
         } else {
             uint amountBOptimal = wonderswapV2Library.quote(amountADesired, reserveA, reserveB);
             if (amountBOptimal <= amountBDesired) {
-                require(amountBOptimal >= amountBMin, 'wonderswapV2Router: INSUFFICIENT_B_AMOUNT');
+                require(amountBOptimal >= amountBMin, "wonderswapV2Router: INSUFFICIENT_B_AMOUNT");
                 (amountA, amountB) = (amountADesired, amountBOptimal);
             } else {
                 uint amountAOptimal = wonderswapV2Library.quote(amountBDesired, reserveB, reserveA);
                 assert(amountAOptimal <= amountADesired);
-                require(amountAOptimal >= amountAMin, 'wonderswapV2Router: INSUFFICIENT_A_AMOUNT');
+                require(amountAOptimal >= amountAMin, "wonderswapV2Router: INSUFFICIENT_A_AMOUNT");
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }
         }
@@ -423,8 +423,8 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
         (uint amount0, uint amount1) = IwonderswapV2Pair(pair).burn(to);
         (address token0, ) = wonderswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
-        require(amountA >= amountAMin, 'wonderswapV2Router: INSUFFICIENT_A_AMOUNT');
-        require(amountB >= amountBMin, 'wonderswapV2Router: INSUFFICIENT_B_AMOUNT');
+        require(amountA >= amountAMin, "wonderswapV2Router: INSUFFICIENT_A_AMOUNT");
+        require(amountB >= amountBMin, "wonderswapV2Router: INSUFFICIENT_B_AMOUNT");
     }
 
     function removeLiquidityETH(address token, uint liquidity, uint amountTokenMin, uint amountETHMin, address to, uint deadline) public virtual override ensure(deadline) returns(uint amountToken, uint amountETH) {
@@ -483,7 +483,7 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
     function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external virtual override ensure(deadline) returns(uint[] memory amounts) {
         amountIn = takeSwapFee(path[0], amountIn, false);
         amounts = wonderswapV2Library.getAmountsOut(factory, amountIn, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
@@ -494,7 +494,7 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
     function swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline) external virtual override ensure(deadline) returns(uint[] memory amounts) {
         takeSwapFee(path[0], amountInMax, false);
         amounts = wonderswapV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= amountInMax, 'wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= amountInMax, "wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT");
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
@@ -503,23 +503,23 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
 
 
     function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external virtual override payable ensure(deadline) returns(uint[] memory amounts) {
-        require(path[0] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, "wonderswapV2Router: INVALID_PATH");
         uint256 msgvalue = msg.value;
         IWETH(WETH).deposit {
             value: msgvalue
         }();
         msgvalue = takeSwapFee(path[0], msgvalue, true);
         amounts = wonderswapV2Library.getAmountsOut(factory, msgvalue, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
         assert(IWETH(WETH).transfer(wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
     }
 
     function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline) external virtual override ensure(deadline) returns(uint[] memory amounts) {
-        require(path[path.length - 1] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, "wonderswapV2Router: INVALID_PATH");
         takeSwapFee(path[0], amountInMax, false);
         amounts = wonderswapV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= amountInMax, 'wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= amountInMax, "wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT");
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
@@ -529,10 +529,10 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
     }
 
     function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external virtual override ensure(deadline) returns(uint[] memory amounts) {
-        require(path[path.length - 1] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, "wonderswapV2Router: INVALID_PATH");
         amountIn = takeSwapFee(path[0], amountIn, false);
         amounts = wonderswapV2Library.getAmountsOut(factory, amountIn, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
@@ -542,14 +542,14 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
     }
 
     function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline) external virtual override payable ensure(deadline) returns(uint[] memory amounts) {
-        require(path[0] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, "wonderswapV2Router: INVALID_PATH");
         uint256 msgValue = msg.value;
         IWETH(WETH).deposit {
             value: msgValue
         }();
         msgValue = takeSwapFee(path[0], msgValue, true);
         amounts = wonderswapV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= msg.value, 'wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= msg.value, "wonderswapV2Router: EXCESSIVE_INPUT_AMOUNT");
         assert(IWETH(WETH).transfer(wonderswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
         // refund dust eth, if any
@@ -584,14 +584,11 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
         );
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
-        require(
-            IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
-            'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
-        );
+        require(IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
     }
 
     function swapExactETHForTokensSupportingFeeOnTransferTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external virtual override payable ensure(deadline) {
-        require(path[0] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, "wonderswapV2Router: INVALID_PATH");
         uint amountIn = msg.value;
         IWETH(WETH).deposit {
             value: amountIn
@@ -600,21 +597,18 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
         assert(IWETH(WETH).transfer(wonderswapV2Library.pairFor(factory, path[0], path[1]), amountIn));
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
-        require(
-            IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
-            'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
-        );
+        require(IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
     }
 
     function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external virtual override ensure(deadline) {
-        require(path[path.length - 1] == WETH, 'wonderswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, "wonderswapV2Router: INVALID_PATH");
         amountIn = takeSwapFee(path[0], amountIn, false);
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, wonderswapV2Library.pairFor(factory, path[0], path[1]), amountIn
         );
         _swapSupportingFeeOnTransferTokens(path, address(this));
         uint amountOut = IERC20(WETH).balanceOf(address(this));
-        require(amountOut >= amountOutMin, 'wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amountOut >= amountOutMin, "wonderswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
         IWETH(WETH).withdraw(amountOut);
         TransferHelper.safeTransferETH(to, amountOut);
     }
