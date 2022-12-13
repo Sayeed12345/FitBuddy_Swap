@@ -460,9 +460,7 @@ contract wonderswapV2Router02 is IwonderswapV2Router02 {
         address pair = wonderswapV2Library.pairFor(factory, token, WETH);
         uint value = approveMax ? uint(-1) : liquidity;
         IwonderswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
-        amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(
-            token, liquidity, amountTokenMin, amountETHMin, to, deadline
-        );
+        amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(token, liquidity, amountTokenMin, amountETHMin, to, deadline);
     }
 
     // **** SWAP ****
